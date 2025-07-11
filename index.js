@@ -16,14 +16,15 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 let persons = []
 
+app.get('/info', (request, response) => {
+  response.send(`<p>Phonebook has info for ${persons.length} people</p>` + new Date())
+})
+
+
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-})
-
-app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p>` + new Date())
 })
 
 app.get('/api/persons/:id', (request, response) =>{
@@ -37,6 +38,20 @@ app.get('/api/persons/:id', (request, response) =>{
   }
 })
 
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+})
+
+
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
@@ -44,30 +59,6 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.post('/api/persons', (request, response) => {
-  const body = request.body
-
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'Name o Number no encontrado'
-    })
-  }
-
-  if (persons.find(p => p.name === body.name)) {
-    return response.status(400).json({
-      error: 'Name debe ser unico'
-    })
-  }
-
-  const person = {
-    id: Math.floor(Math.random() * (999999999 - 1 + 1)) + 1,
-    name: body.name,
-    number: body.number
-  }
-  
-  persons = persons.concat(person)
-  response.json(person)
-})
 
 
 const PORT = process.env.PORT
