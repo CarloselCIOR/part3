@@ -7,11 +7,10 @@
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "CarloselCIOR",
-  "license": "",
+  "author": "Matti Luukkainen",
+  "license": "MIT",
   "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.21.2"
   }
 }
