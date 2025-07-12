@@ -17,7 +17,14 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 let persons = []
 
 app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p>` + new Date())
+  request.body = persons
+  Person.find({}).then(persons => { 
+    response.send(`<p>Phonebook has info for ${persons.length} people</p>` + new Date())
+  })
+    .catch(error => {
+      console.error(error)
+      response.status(500).send('Error retrieving persons')
+    })
 })
 
 
